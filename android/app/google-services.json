@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "578016732438",
+    "project_id": "cegevdriver-9d40a",
+    "storage_bucket": "cegevdriver-9d40a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578016732438:android:ad89660741ee3de6805c37",
+        "android_client_info": {
+          "package_name": "com.example.ceg_ev_driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578016732438-afvma5r2sv2u80krigr7gopjldrvqja6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqTD-kwYRozvu0JYewB_SOMmzCTCW5JKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578016732438-afvma5r2sv2u80krigr7gopjldrvqja6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
