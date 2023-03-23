@@ -1,5 +1,5 @@
 import 'dart:ffi';
-
+import 'package:web_socket_channel/io.dart';
 import 'package:ceg_ev_driver/screens/login_screen.dart';
 import 'package:ceg_ev_driver/screens/home_screen.dart';
 import 'package:ceg_ev_driver/ui/splash.dart';
