@@ -7,6 +7,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../helpers/shared_prefs.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:http/http.dart';
 
 class HomeManagement extends StatefulWidget {
   const HomeManagement({Key? key}) : super(key: key);
@@ -31,7 +32,7 @@ class _HomeManagementState extends State<HomeManagement> {
   void initState() {
     super.initState();
     _initialCameraPosition = CameraPosition(target: latLng, zoom: 15);
-    channel = IOWebSocketChannel.connect('ws://10.0.2.2:3000');
+    channel = IOWebSocketChannel.connect('ws://192.168.214.150:3000');
   }
 
   _onMapCreated(MapboxMapController controller) async {
