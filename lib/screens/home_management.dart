@@ -32,7 +32,7 @@ class _HomeManagementState extends State<HomeManagement> {
   void initState() {
     super.initState();
     _initialCameraPosition = CameraPosition(target: latLng, zoom: 15);
-    channel = IOWebSocketChannel.connect('ws://192.168.214.150:3000');
+    channel = IOWebSocketChannel.connect('ws://10.0.2.2:3000');
   }
 
   _onMapCreated(MapboxMapController controller) async {
@@ -55,8 +55,8 @@ class _HomeManagementState extends State<HomeManagement> {
           _locationData!.longitude!.toDouble());
 
       _currentCameraPosition = CameraPosition(target: loc, zoom: 15);
-      msg = loc.toString();
-      channel?.sink.add(loc.toString());
+      msg = "H1:" + loc.toString();
+      channel?.sink.add(msg);
     });
   }
 
@@ -96,7 +96,7 @@ class _HomeManagementState extends State<HomeManagement> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Title Here'),
+        title: const Text('DRIVER APP'),
         centerTitle: true,
       ),
       body: SafeArea(
