@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ceg_ev_driver/main.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -8,6 +10,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../helpers/shared_prefs.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:http/http.dart';
+
+class requestData {
+  String? sender;
+  double? latitude, longitude;
+  requestData({this.sender, this.latitude, this.longitude});
+  Map<String, dynamic> toJson() => {
+        'sender': sender,
+        'latitude': latitude,
+        'longitude': longitude,
+      };
+}
 
 class HomeManagement extends StatefulWidget {
   const HomeManagement({Key? key}) : super(key: key);
@@ -27,6 +40,9 @@ class _HomeManagementState extends State<HomeManagement> {
   IOWebSocketChannel? channel;
   Location _location = Location();
   LocationData? _locationData;
+
+  // Request Variable
+  // requestData reqdata = requestData();
 
   @override
   void initState() {
@@ -55,8 +71,18 @@ class _HomeManagementState extends State<HomeManagement> {
           _locationData!.longitude!.toDouble());
 
       _currentCameraPosition = CameraPosition(target: loc, zoom: 15);
-      msg = "H1:" + loc.toString();
-      channel?.sink.add(msg);
+
+      requestData reqdata = requestData(
+          sender: "H1_DRIVER",
+          latitude: _locationData!.latitude!.toDouble(),
+          longitude: _locationData!.longitude!.toDouble());
+
+      String jsonString = jsonEncode(reqdata);
+
+      // msg = "H1:" + loc.toString();
+      // channel?.sink.add(msg);
+      // channel?.sink.add(reqdata);
+      channel?.sink.add(jsonString);
     });
   }
 

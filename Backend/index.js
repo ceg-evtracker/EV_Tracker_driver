@@ -17,11 +17,18 @@ wss.on('connection', function(ws, req) {
     console.log('Client Connected');
     
     
+    
     ws.on('message', message => {
+        console.log(message);
+        const res_Data = JSON.parse(message);
+
+        console.log('Name:',res_Data.sender);
+        console.log('latitude:',res_Data.latitude);
+        console.log('longitude:',res_Data.longitude);
+
+        // var dataString = message.toString();
         // console.log(message);
-        var dataString = message.toString();
-        // console.log(message);
-        console.log(dataString);
+        // console.log(dataString);
         wss.clients.forEach((client) => {
                 if(message.toString().startsWith("H1:")){
                 client.send(message.toString());
