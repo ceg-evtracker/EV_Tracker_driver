@@ -8,6 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../helpers/shared_prefs.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'login_screen.dart';
+
+
+DateTime now = DateTime.now();
+String formattedTime = DateFormat.Hm().format(now);
 
 class HomeManagement extends StatefulWidget {
   const HomeManagement({Key? key}) : super(key: key);
@@ -58,6 +65,20 @@ List<LatLng> _points2 = [
     LatLng(13.014109, 80.236849),
     LatLng(13.013753, 80.236801)
     ];
+
+String _buttonText = 'Start';
+    void _onButtonPressed() {
+      if(_buttonText == 'Start'){
+    setState(() {
+      _buttonText = 'End'; // change text when FAB is pressed
+    });
+      }
+      else {
+        setState(() {
+      _buttonText = 'Start'; // change text when FAB is pressed
+    });
+      }
+  }
 
   @override
   void initState() {
@@ -120,16 +141,15 @@ List<LatLng> _points2 = [
       }
     });
   }
-  TimeOfDay now=TimeOfDay.now();
   _onStyleLoadedCallback() async {
-    if(now==true){
+    if(DateTime.now().hour >= 16 && DateTime.now().hour < 18) {
     _mapController.addLine(LineOptions(
       geometry: _points, // Use the stored points to draw the line
       lineColor: 'red',
       lineOpacity: 1.0,
       lineWidth: 3.0,
     )); }
-    else if(now=='18:20'){
+    else if(DateTime.now().hour >= 18 && DateTime.now().hour <= 20){
     _mapController.addLine(LineOptions(
       geometry: _points1, // Use the stored points to draw the line
       lineColor: 'blue',
@@ -166,11 +186,27 @@ List<LatLng> _points2 = [
               myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
               minMaxZoomPreference: const MinMaxZoomPreference(14, 17),
             ),
-          )
+          ),
+          Column(children: <Widget>[
+        Expanded(
+            child: Align(
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                    prefs.setBool('isLoggedIn',false);
+                    logout(context);
+                    }, child: const Text('Logout'))))
+      ]),
         ],
-      )),
-      floatingActionButton: FloatingActionButton(
+        
+      )
+      ),
+      floatingActionButton: Stack(
+        children: <Widget>[
+           FloatingActionButton(
         onPressed: () {
+          _onButtonPressed();
           _message = "Hello World!";
           _message = latLng.toString();
           // LatLng latLng = getLatLngFromSharedPrefs();
@@ -190,6 +226,25 @@ List<LatLng> _points2 = [
         },
         child: const Icon(Icons.my_location),
       ),
+      Positioned(
+            bottom: 40.0,
+            left: 13.0,
+            child: Text(
+              _buttonText,
+              style: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+      
     );
+  }
+  Future<void> logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 }
