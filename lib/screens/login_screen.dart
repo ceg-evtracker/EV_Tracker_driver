@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/widgets.dart';
 import 'package:ceg_ev_driver/screens/forgot_pw_page.dart';
+import 'package:ceg_ev_driver/ui/splash.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -240,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           sharedPreferences.setString('id', id).then((_) {
                             Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) => HomeScreen())
+                                MaterialPageRoute(builder: (context) => Splash())
                             );
                              });
                         } else {
