@@ -23,10 +23,41 @@ class _HomeManagementState extends State<HomeManagement> {
   LatLng loc = getLatLngFromSharedPrefs();
   late CameraPosition _initialCameraPosition;
   late CameraPosition _currentCameraPosition;
-  late MapboxMapController controller;
+  late MapboxMapController _mapController;
   IOWebSocketChannel? channel;
   Location _location = Location();
   LocationData? _locationData;
+
+  List<LatLng> _points = [
+    LatLng(13.008382, 80.235081),
+    LatLng(13.009973, 80.235344),
+    LatLng(13.010093, 80.235494),
+    LatLng(13.010668, 80.235612),
+    LatLng(13.010574, 80.236342),
+    LatLng(13.013759, 80.236793)
+    ];
+
+     List<LatLng> _points1 = [
+    LatLng(13.008345, 80.234994),
+    LatLng(13.009930, 80.235213),
+    LatLng(13.010045, 80.235169),
+    LatLng(13.010066, 80.235094),
+    LatLng(13.010129, 80.235067),
+    LatLng(13.010725, 80.235180),
+    LatLng(13.010829, 80.234461),
+    LatLng(13.010934, 80.233682),
+    LatLng(13.011153, 80.232395),
+    LatLng(13.011023, 80.231623),
+    LatLng(13.010699, 80.231553)
+    ];
+
+List<LatLng> _points2 = [
+    LatLng(13.010706, 80.235397),  
+    LatLng(13.010829, 80.234461),
+    LatLng(13.014327, 80.235126),
+    LatLng(13.014109, 80.236849),
+    LatLng(13.013753, 80.236801)
+    ];
 
   @override
   void initState() {
@@ -36,7 +67,7 @@ class _HomeManagementState extends State<HomeManagement> {
   }
 
   _onMapCreated(MapboxMapController controller) async {
-    this.controller = controller;
+    this._mapController = controller;
   }
 
   void _startSending() {
@@ -89,8 +120,30 @@ class _HomeManagementState extends State<HomeManagement> {
       }
     });
   }
-
-  _onStyleLoadedCallback() async {}
+  TimeOfDay now=TimeOfDay.now();
+  _onStyleLoadedCallback() async {
+    if(now==true){
+    _mapController.addLine(LineOptions(
+      geometry: _points, // Use the stored points to draw the line
+      lineColor: 'red',
+      lineOpacity: 1.0,
+      lineWidth: 3.0,
+    )); }
+    else if(now=='18:20'){
+    _mapController.addLine(LineOptions(
+      geometry: _points1, // Use the stored points to draw the line
+      lineColor: 'blue',
+      lineOpacity: 1.0,
+      lineWidth: 3.0,
+    )); }
+    else {
+    _mapController.addLine(LineOptions(
+      geometry: _points2, // Use the stored points to draw the line
+      lineColor: 'black',
+      lineOpacity: 1.0,
+      lineWidth: 3.0,
+    )); }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +185,7 @@ class _HomeManagementState extends State<HomeManagement> {
             }
             // sendMsg(_message);
           }
-          controller.animateCamera(
+          _mapController.animateCamera(
               CameraUpdate.newCameraPosition(_currentCameraPosition));
         },
         child: const Icon(Icons.my_location),
