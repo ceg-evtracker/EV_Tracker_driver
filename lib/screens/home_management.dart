@@ -1,4 +1,5 @@
 import 'package:ceg_ev_driver/main.dart';
+import 'package:ceg_ev_driver/screens/navigation_bloc.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,14 +10,16 @@ import '../helpers/shared_prefs.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../model/user_model.dart';
+import 'navigation_bloc.dart';
 import 'login_screen.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+import 'sidebar.dart';
+import 'sidebar_layout.dart';
 
-
-DateTime now = DateTime.now();
-String formattedTime = DateFormat.Hm().format(now);
-
-class HomeManagement extends StatefulWidget {
+class HomeManagement extends StatefulWidget with NavigationStates {
   const HomeManagement({Key? key}) : super(key: key);
 
   @override
@@ -26,6 +29,7 @@ class HomeManagement extends StatefulWidget {
 class _HomeManagementState extends State<HomeManagement> {
   String? _message;
   bool _isSending = false;
+  bool status = false;
   LatLng latLng = getLatLngFromSharedPrefs();
   LatLng loc = getLatLngFromSharedPrefs();
   late CameraPosition _initialCameraPosition;
@@ -42,9 +46,9 @@ class _HomeManagementState extends State<HomeManagement> {
     LatLng(13.010668, 80.235612),
     LatLng(13.010574, 80.236342),
     LatLng(13.013759, 80.236793)
-    ];
+  ];
 
-     List<LatLng> _points1 = [
+  List<LatLng> _points1 = [
     LatLng(13.008345, 80.234994),
     LatLng(13.009930, 80.235213),
     LatLng(13.010045, 80.235169),
@@ -56,35 +60,45 @@ class _HomeManagementState extends State<HomeManagement> {
     LatLng(13.011153, 80.232395),
     LatLng(13.011023, 80.231623),
     LatLng(13.010699, 80.231553)
-    ];
+  ];
 
-List<LatLng> _points2 = [
-    LatLng(13.010706, 80.235397),  
+  List<LatLng> _points2 = [
+    LatLng(13.010706, 80.235397),
     LatLng(13.010829, 80.234461),
     LatLng(13.014327, 80.235126),
     LatLng(13.014109, 80.236849),
     LatLng(13.013753, 80.236801)
-    ];
+  ];
 
-String _buttonText = 'Start';
-    void _onButtonPressed() {
-      if(_buttonText == 'Start'){
-    setState(() {
-      _buttonText = 'End'; // change text when FAB is pressed
-    });
-      }
-      else {
-        setState(() {
-      _buttonText = 'Start'; // change text when FAB is pressed
-    });
-      }
+  String _buttonText = 'Start';
+  void _onButtonPressed() {
+    if (_buttonText == 'Start') {
+      setState(() {
+        _buttonText = 'End'; // change text when FAB is pressed
+      });
+    } else {
+      setState(() {
+        _buttonText = 'Start'; // change text when FAB is pressed
+      });
+    }
   }
+
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
 
   @override
   void initState() {
     super.initState();
     _initialCameraPosition = CameraPosition(target: latLng, zoom: 15);
     channel = IOWebSocketChannel.connect('ws://10.0.2.2:3000');
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user?.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
   }
 
   _onMapCreated(MapboxMapController controller) async {
@@ -141,37 +155,35 @@ String _buttonText = 'Start';
       }
     });
   }
+
   _onStyleLoadedCallback() async {
-    if(DateTime.now().hour >= 16 && DateTime.now().hour < 18) {
-    _mapController.addLine(LineOptions(
-      geometry: _points, // Use the stored points to draw the line
-      lineColor: 'red',
-      lineOpacity: 1.0,
-      lineWidth: 3.0,
-    )); }
-    else if(DateTime.now().hour >= 18 && DateTime.now().hour <= 20){
-    _mapController.addLine(LineOptions(
-      geometry: _points1, // Use the stored points to draw the line
-      lineColor: 'blue',
-      lineOpacity: 1.0,
-      lineWidth: 3.0,
-    )); }
-    else {
-    _mapController.addLine(LineOptions(
-      geometry: _points2, // Use the stored points to draw the line
-      lineColor: 'black',
-      lineOpacity: 1.0,
-      lineWidth: 3.0,
-    )); }
+    if (DateTime.now().hour >= 16 && DateTime.now().hour < 18) {
+      _mapController.addLine(LineOptions(
+        geometry: _points, // Use the stored points to draw the line
+        lineColor: 'red',
+        lineOpacity: 1.0,
+        lineWidth: 3.0,
+      ));
+    } else if (DateTime.now().hour >= 18 && DateTime.now().hour <= 20) {
+      _mapController.addLine(LineOptions(
+        geometry: _points1, // Use the stored points to draw the line
+        lineColor: 'blue',
+        lineOpacity: 1.0,
+        lineWidth: 3.0,
+      ));
+    } else {
+      _mapController.addLine(LineOptions(
+        geometry: _points2, // Use the stored points to draw the line
+        lineColor: 'black',
+        lineOpacity: 1.0,
+        lineWidth: 3.0,
+      ));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('DRIVER APP'),
-        centerTitle: true,
-      ),
       body: SafeArea(
           child: Stack(
         children: [
@@ -187,61 +199,60 @@ String _buttonText = 'Start';
               minMaxZoomPreference: const MinMaxZoomPreference(14, 17),
             ),
           ),
-          Column(children: <Widget>[
-        Expanded(
-            child: Align(
-                alignment: Alignment.bottomCenter,
-                child: ElevatedButton(
-                    onPressed: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool('isLoggedIn',false);
-                    logout(context);
-                    }, child: const Text('Logout'))))
-      ]),
-        ],
-        
-      )
-      ),
-      floatingActionButton: Stack(
-        children: <Widget>[
-           FloatingActionButton(
-        onPressed: () {
-          _onButtonPressed();
-          _message = "Hello World!";
-          _message = latLng.toString();
-          // LatLng latLng = getLatLngFromSharedPrefs();
-          // sendMsg(latLng);
-          if (_message!.isNotEmpty) {
-            if (_isSending == false) {
-              _isSending = true;
-              _startSending();
-            } else {
-              _isSending = false;
-              _stopSending();
-            }
-            // sendMsg(_message);
-          }
-          _mapController.animateCamera(
-              CameraUpdate.newCameraPosition(_currentCameraPosition));
-        },
-        child: const Icon(Icons.my_location),
-      ),
-      Positioned(
-            bottom: 40.0,
-            left: 13.0,
-            child: Text(
-              _buttonText,
-              style: const TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+          Stack(
+            //mainAxisAlignment: MainAxisAlignment.end,
+
+            children: <Widget>[
+              Positioned(
+                right: 16.0,
+                bottom: 16.0,
+                child: FlutterSwitch(
+                    width: 130.0,
+                    height: 45.0,
+                    valueFontSize: 25.0,
+                    toggleSize: 45.0,
+                    value: status,
+                    borderRadius: 30.0,
+                    padding: 8.0,
+                    inactiveColor: Color.fromARGB(255, 201, 225, 243),
+                    inactiveText: 'Start',
+                    inactiveTextColor: Colors.black,
+                    inactiveTextFontWeight: FontWeight.w500,
+                    activeColor: Color.fromARGB(255, 85, 151, 87),
+                    activeText: 'End',
+                    activeTextColor: Colors.black,
+                    activeTextFontWeight: FontWeight.w500,
+                    showOnOff: true,
+                    onToggle: (val) {
+                      setState(() {
+                        status = val;
+                      });
+                      _message = "Hello World!";
+                      _message = latLng.toString();
+                      // LatLng latLng = getLatLngFromSharedPrefs();
+                      // sendMsg(latLng);
+                      if (_message!.isNotEmpty) {
+                        if (_isSending == false) {
+                          _isSending = true;
+                          _startSending();
+                        } else {
+                          _isSending = false;
+                          _stopSending();
+                        }
+                        // sendMsg(_message);
+                      }
+                      _mapController.animateCamera(
+                          CameraUpdate.newCameraPosition(
+                              _currentCameraPosition));
+                    }),
               ),
-            ),
-          ),
+            ],
+          )
         ],
-      ),
-      
+      )),
     );
   }
+
   Future<void> logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
     Navigator.of(context).pushReplacement(

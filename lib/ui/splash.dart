@@ -1,9 +1,11 @@
 import 'package:ceg_ev_driver/main.dart';
+import 'package:ceg_ev_driver/screens/sidebar_layout.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:location/location.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import '../screens/home_management.dart';
+import '../screens/sidebar_layout.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -47,7 +49,7 @@ class _SplashState extends State<Splash> {
     // Get and store the directions API response in sharedPreferences
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const HomeManagement()),
+        MaterialPageRoute(builder: (_) => SideBarLayout()),
         (route) => false);
   }
 

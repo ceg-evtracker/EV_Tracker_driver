@@ -1,4 +1,5 @@
 import 'package:ceg_ev_driver/screens/home_screen.dart';
+import 'package:ceg_ev_driver/screens/navigation_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import 'package:ceg_ev_driver/screens/forgot_pw_page.dart';
 import 'package:ceg_ev_driver/ui/splash.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatefulWidget with NavigationStates {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -46,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // reg expression for email validation
           if (!RegExp("^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*")
               .hasMatch(value)) {
-            return ("Please Enter a valid email");
+            return ("Please Enter a valid EV Number");
           }
           return null;
         },
@@ -149,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: 25),
                     passwordField,
                     SizedBox(height: 8),
-        Padding(
+        /*Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -175,10 +176,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
-        ),
+        ),*/
          SizedBox(height: 25),
                     loginButton,
-                    SizedBox(height: 15),
+                    /*SizedBox(height: 15),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -203,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontSize: 15),
                             ),
                           )
-                        ])
+                        ])*/
                   ],
                 ),
               ),
