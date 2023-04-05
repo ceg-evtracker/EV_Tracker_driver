@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     FirebaseFirestore.instance
-        .collection("users")
+        .collection("EV_Number")
         .doc(user?.uid)
         .get()
         .then((value) {
@@ -36,56 +36,56 @@ class _HomeScreenState extends State<HomeScreen> {
     return Stack(
       children: [
         BackgroundImage(),
-     Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        title: const Text("Welcome"),
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                height: 150,
-                child: Image.asset("assets/logo.png", fit: BoxFit.contain),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: const Text("Welcome"),
+            backgroundColor: Colors.transparent,
+            centerTitle: true,
+          ),
+          body: Center(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 150,
+                    child: Image.asset("assets/logo.png", fit: BoxFit.contain),
+                  ),
+                  Text(
+                    "Welcome Back",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text("${loggedInUser.id}",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
+                      )),
+                  Text("${loggedInUser.id}",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
+                      )),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  ActionChip(
+                      label: Text("Logout"),
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        prefs.setBool('isLoggedIn', false);
+                        logout(context);
+                      }),
+                ],
               ),
-              Text(
-                "Welcome Back",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("${loggedInUser.name}",
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  )),
-              Text("${loggedInUser.email}",
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  )),
-              SizedBox(
-                height: 15,
-              ),
-              ActionChip(
-                  label: Text("Logout"),
-                  onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool('isLoggedIn',false);
-                    logout(context);
-                  }),
-            ],
+            ),
           ),
         ),
-      ),
-    ),
       ],
     );
   }
