@@ -19,7 +19,6 @@ wss.on('connection', function(ws, req) {
     
     
     ws.on('message', message => {
-        console.log(message);
         const res_Data = JSON.parse(message);
 
         console.log('Name:',res_Data.sender);
@@ -30,7 +29,8 @@ wss.on('connection', function(ws, req) {
         // console.log(message);
         // console.log(dataString);
         wss.clients.forEach((client) => {
-                if(message.toString().startsWith("H1:")){
+                // console.log(client);
+                if(res_Data.sender == "H1_DRIVER"){
                 client.send(message.toString());
                 }
             
