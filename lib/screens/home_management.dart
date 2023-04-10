@@ -90,13 +90,14 @@ class _HomeManagementState extends State<HomeManagement> {
     print(userMarker.options.geometry);
   }
 
+  _printLocation(Symbol symbol) {
+    if (symbol.options.textField != 'H1') {
+      print(symbol.options.geometry);
+    }
+  }
+
   void _onSymbolTapped(Symbol symbol) {
-    for (int i = 0; i < _userMarkers.length; i++) {
-      print(_userMarkers);
-    }
-    if (_userMarkers.contains(symbol)) {
-      print(controller.getSymbolLatLng(symbol));
-    }
+    _printLocation(symbol);
   }
 
   _startLocationUpdates() {
@@ -111,6 +112,7 @@ class _HomeManagementState extends State<HomeManagement> {
     if (_locationSymbol == null) {
       _locationSymbol = await controller.addSymbol(
         SymbolOptions(
+          textField: 'H1',
           geometry: LatLng(lat, lng),
           iconImage: 'assets/icon/EV_TOP.png',
           iconSize: 0.175,
@@ -124,6 +126,7 @@ class _HomeManagementState extends State<HomeManagement> {
         SymbolOptions(
           geometry: LatLng(lat, lng),
           iconImage: 'assets/icon/EV_TOP.png',
+          textField: 'H1',
         ),
       );
     }
@@ -133,19 +136,19 @@ class _HomeManagementState extends State<HomeManagement> {
   _onMapCreated(MapboxMapController controller) async {
     this.controller = controller;
     print('ContRoller works0\n');
-    print(LatLng(
-      _curLocData!.latitude!.toDouble(),
-      _curLocData!.longitude!.toDouble(),
-    ));
-    controller.animateCamera(
-      CameraUpdate.newLatLng(
-        LatLng(
-          _curLocData!.latitude!.toDouble(),
-          _curLocData!.longitude!.toDouble(),
-        ),
-      ),
-    );
-    // controller.onSymbolTapped.add(_onSymbolTapped);
+    // print(LatLng(
+    //   _curLocData!.latitude!.toDouble(),
+    //   _curLocData!.longitude!.toDouble(),
+    // ));
+    // controller.animateCamera(
+    //   CameraUpdate.newLatLng(
+    //     LatLng(
+    //       _curLocData!.latitude!.toDouble(),
+    //       _curLocData!.longitude!.toDouble(),
+    //     ),
+    //   ),
+    // );
+    controller.onSymbolTapped.add(_onSymbolTapped);
   }
 
   @override
